@@ -36,9 +36,12 @@ export default function Dashboard() {
       } else {
         // First login — provision a key via your API server
         const res = await fetch("/api/provision-key", { method: "POST" });
+        const d = await res.json();
         if (res.ok) {
-          const d = await res.json();
           setKeyRecord(d);
+        } else {
+          console.error("provision-key failed:", res.status, d);
+          alert(`Failed to provision API key: ${d.error ?? res.status}`);
         }
       }
       setLoading(false);
