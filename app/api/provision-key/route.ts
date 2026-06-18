@@ -36,7 +36,7 @@ export async function POST() {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "X-Admin-Key": adminKey,
+      "X-API-Key": adminKey,
     },
     body: JSON.stringify({ name: user.email }),
   });
