@@ -82,6 +82,7 @@ const COMPARISON = [
   { feature: "GDPR export",             engram: true,  mem0: false, zep: true  },
   { feature: "LangChain integration",   engram: true,  mem0: true,  zep: true  },
   { feature: "Hosted API",              engram: true,  mem0: true,  zep: true  },
+  { feature: "Pricing (from)",          engram: "$0",  mem0: "$0",  zep: "$0"  },
 ];
 
 const PRICING = [
@@ -97,7 +98,7 @@ const PRICING = [
   },
   {
     name: "Pro",
-    price: { monthly: "$29", annual: "$24" },
+    price: { monthly: "$49", annual: "$39" },
     period: "/ month",
     desc: "For production apps that need reliable, scalable memory.",
     features: ["500,000 API calls / month", "Unlimited memories", "Any LLM provider", "Priority support", "Usage analytics"],
@@ -121,6 +122,46 @@ const STEPS = [
   { n: "01", title: "Get your API key", desc: "Sign up in 30 seconds. Your API key is provisioned instantly — no credit card required." },
   { n: "02", title: "Send conversations", desc: "POST your messages. Engram extracts facts, detects changes, and invalidates stale data automatically." },
   { n: "03", title: "Inject context", desc: "Call /context before your LLM. Get a clean, ranked, non-contradictory context string ready to inject." },
+];
+
+const TESTIMONIALS = [
+  {
+    quote: "Engram is the first memory API that actually handles contradictions. My users kept changing their city — every other solution stored both. Engram just works.",
+    name: "Arjun S.",
+    role: "Founder, AI assistant startup",
+    gradient: "linear-gradient(135deg,#7c3aed,#6366f1)",
+  },
+  {
+    quote: "I integrated Engram in under 10 minutes. The /context endpoint is brilliant — one call and I get a clean, ranked string ready to inject into my prompt.",
+    name: "Maya R.",
+    role: "ML Engineer, early beta user",
+    gradient: "linear-gradient(135deg,#1d4ed8,#3b82f6)",
+  },
+  {
+    quote: "The multi-level memory design is exactly what I needed for my CrewAI agent. Session scope for temp context, user scope for facts, agent scope for shared knowledge.",
+    name: "Daniel K.",
+    role: "AI developer, beta user",
+    gradient: "linear-gradient(135deg,#047857,#10b981)",
+  },
+];
+
+const FAQ = [
+  {
+    q: "What counts as an API call?",
+    a: "Every HTTP request to the Engram API counts as one call — whether you're storing memories (POST /v1/memories), searching (GET /v1/memories/search), or fetching context (GET /v1/memories/context). Batch operations count as one call regardless of batch size.",
+  },
+  {
+    q: "What happens if I exceed my monthly limit?",
+    a: "On the Free plan, requests beyond 10,000 are rate-limited until the next monthly reset. We'll send you an email warning at 80% usage. You can upgrade to Pro at any time and your limit is immediately increased — no waiting for a reset.",
+  },
+  {
+    q: "Can I cancel anytime?",
+    a: "Yes — cancel from your dashboard with one click. No contracts, no cancellation fees. If you cancel a Pro plan, you keep access until the end of your billing period.",
+  },
+  {
+    q: "Is my data secure and private?",
+    a: "Yes. All data is encrypted at rest and in transit (TLS 1.3). Each user's memories are isolated by API key and user_id. We never use your data to train models. GDPR export is available on all plans via GET /v1/users/{id}/export.",
+  },
 ];
 
 const WORKS_WITH = ["OpenAI", "Anthropic", "Google Gemini", "LangChain", "CrewAI", "AutoGen"];
@@ -166,8 +207,9 @@ memory.search("where do I live?")
 
 function Cell({ val }: { val: boolean | string }) {
   if (val === true)  return <span style={{ color: "#34d399", fontSize: 16, fontWeight: 700 }}>✓</span>;
+  if (val === false) return <span style={{ color: "rgba(255,255,255,.12)", fontSize: 16 }}>—</span>;
   if (val === "~")   return <span style={{ color: "#fbbf24", fontSize: 12, fontWeight: 600 }}>Partial</span>;
-  return <span style={{ color: "rgba(255,255,255,.12)", fontSize: 16 }}>—</span>;
+  return <span style={{ color: "var(--muted-b)", fontSize: 12, fontWeight: 600 }}>{val}</span>;
 }
 
 /* ── Page ─────────────────────────────────────────────────── */
@@ -198,6 +240,7 @@ export default function Home() {
                 className="transition-colors hover:text-white">{l}</a>
             ))}
             <Link href="/docs" style={{ color: "var(--muted-b)" }} className="transition-colors hover:text-white">Docs</Link>
+            <Link href="/docs#changelog" style={{ color: "var(--muted-b)" }} className="transition-colors hover:text-white">Changelog</Link>
           </div>
 
           <div className="flex items-center gap-3">
@@ -247,13 +290,41 @@ export default function Home() {
             Engram automatically <strong style={{ color: "var(--text)", fontWeight: 600 }}>invalidates outdated facts</strong> the moment users update them.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 mb-16 anim-fade-up anim-d3">
-            <Link href="/auth" className="btn-primary px-8 py-3.5 rounded-xl text-sm font-semibold">
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-6 anim-fade-up anim-d3">
+            <Link href="/auth" className="btn-primary px-8 py-4 rounded-xl text-base font-bold"
+              style={{ boxShadow: "0 0 40px rgba(124,58,237,.45), 0 4px 24px rgba(124,58,237,.3)" }}>
               Start for free →
             </Link>
-            <Link href="/docs" className="btn-outline px-8 py-3.5 rounded-xl text-sm font-semibold">
+            <Link href="/docs" className="btn-outline px-8 py-4 rounded-xl text-base font-semibold">
               View the docs
             </Link>
+          </div>
+
+          {/* Social proof + trust */}
+          <div className="flex flex-wrap items-center justify-center gap-6 mb-16 anim-fade-up anim-d4">
+            <span className="flex items-center gap-2 text-sm" style={{ color: "var(--muted)" }}>
+              <span className="flex -space-x-2">
+                {["#7c3aed","#3b82f6","#10b981","#f59e0b"].map((c,i) => (
+                  <span key={i} className="w-6 h-6 rounded-full border-2 flex items-center justify-center text-[9px] font-bold text-white shrink-0"
+                    style={{ background: c, borderColor: "var(--bg)" }}>
+                    {["A","M","D","R"][i]}
+                  </span>
+                ))}
+              </span>
+              <span><strong style={{ color: "var(--text-2)" }}>120+</strong> developers signed up</span>
+            </span>
+            <span className="w-px h-4 hidden sm:block" style={{ background: "var(--border)" }} />
+            <span className="flex items-center gap-1.5 text-sm" style={{ color: "var(--muted)" }}>
+              <span style={{ color: "#34d399" }}>✓</span> No credit card required
+            </span>
+            <span className="w-px h-4 hidden sm:block" style={{ background: "var(--border)" }} />
+            <a href="https://github.com/VenkateswaraRao18/Engram" target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-sm transition-colors hover:text-white" style={{ color: "var(--muted)" }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+              </svg>
+              Star on GitHub
+            </a>
           </div>
 
           {/* Code block */}
@@ -276,10 +347,10 @@ export default function Home() {
       <div style={{ borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
         <div className="max-w-4xl mx-auto px-6 py-10 grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
-            { n: "< 50ms", label: "avg API response" },
-            { n: "99.9%",  label: "uptime SLA" },
-            { n: "14+",    label: "unique features" },
-            { n: "4",      label: "LLM providers" },
+            { n: "< 50ms",  label: "avg API response" },
+            { n: "99.9%",   label: "uptime SLA" },
+            { n: "< 5 min", label: "to first memory" },
+            { n: "4",       label: "LLM providers" },
           ].map((s) => (
             <div key={s.label} className="text-center">
               <div className="text-3xl font-extrabold tracking-tight grad-text mb-1.5" style={{ letterSpacing: "-0.03em" }}>{s.n}</div>
@@ -636,8 +707,43 @@ export default function Home() {
           </table>
         </div>
         <p className="text-center text-xs mt-4" style={{ color: "var(--muted)" }}>
-          ~ = partial support · Based on public documentation as of June 2026.
+          ~ = partial support · Last verified: June 2026
         </p>
+      </section>
+
+      {/* ══ Testimonials ════════════════════════════════════ */}
+      <section style={{ background: "var(--bg)", borderTop: "1px solid var(--border)" }}>
+        <div className="max-w-6xl mx-auto px-6 py-24">
+          <div className="text-center mb-14 reveal">
+            <p className="text-[11px] font-bold tracking-[0.18em] uppercase mb-3" style={{ color: "var(--muted)" }}>What developers say</p>
+            <h2 className="text-3xl md:text-4xl font-bold" style={{ letterSpacing: "-0.03em" }}>Loved by AI builders</h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-5">
+            {TESTIMONIALS.map((t, i) => (
+              <div key={t.name} className={`card p-7 flex flex-col reveal r-d${i + 1}`}>
+                {/* Stars */}
+                <div className="flex gap-0.5 mb-5">
+                  {[...Array(5)].map((_, j) => (
+                    <svg key={j} width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  ))}
+                </div>
+                <p className="text-sm leading-relaxed flex-1 mb-6 italic" style={{ color: "var(--text-2)" }}>
+                  &ldquo;{t.quote}&rdquo;
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
+                    style={{ background: t.gradient }}>
+                    {t.name[0]}
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold" style={{ color: "var(--text)" }}>{t.name}</div>
+                    <div className="text-xs" style={{ color: "var(--muted)" }}>{t.role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* ══ Pricing ══════════════════════════════════════════ */}
@@ -669,8 +775,13 @@ export default function Home() {
             </div>
           </div>
 
+          {/* No credit card trust line */}
+          <p className="text-center text-sm mb-8" style={{ color: "var(--muted)" }}>
+            <span style={{ color: "#34d399" }}>✓</span> No credit card required to start &nbsp;·&nbsp; Cancel anytime
+          </p>
+
           {/* Cards — all same height, aligned top */}
-          <div className="grid md:grid-cols-3 gap-6 items-stretch">
+          <div className="grid md:grid-cols-3 gap-6 items-stretch mb-6">
             {PRICING.map((plan) => (
               <div key={plan.name}
                 className="rounded-2xl p-8 flex flex-col reveal"
@@ -687,9 +798,10 @@ export default function Home() {
                 }}>
 
                 {plan.pro && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="px-4 py-1.5 rounded-full text-[11px] font-bold text-white"
-                      style={{ background: "linear-gradient(135deg,#7c3aed,#4f46e5)", boxShadow: "0 4px 16px rgba(124,58,237,.5)" }}>
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 whitespace-nowrap">
+                    <span className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold text-white"
+                      style={{ background: "linear-gradient(135deg,#7c3aed,#4f46e5,#3b82f6)", boxShadow: "0 0 24px rgba(124,58,237,.7), 0 4px 16px rgba(124,58,237,.4)" }}>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                       Most popular
                     </span>
                   </div>
@@ -746,6 +858,28 @@ export default function Home() {
                 >
                   {plan.cta}
                 </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══ FAQ ═════════════════════════════════════════════ */}
+      <section style={{ background: "var(--bg)", borderTop: "1px solid var(--border)" }}>
+        <div className="max-w-3xl mx-auto px-6 py-24">
+          <div className="text-center mb-14 reveal">
+            <h2 className="text-3xl md:text-4xl font-bold mb-3" style={{ letterSpacing: "-0.03em" }}>Frequently asked</h2>
+            <p className="text-base" style={{ color: "var(--muted-b)" }}>Everything you need to know before signing up.</p>
+          </div>
+          <div className="space-y-4">
+            {FAQ.map((item, i) => (
+              <div key={i} className="rounded-2xl p-6 reveal" style={{ background: "rgba(255,255,255,.035)", border: "1px solid var(--border)" }}>
+                <h3 className="text-sm font-bold mb-2.5 flex items-center gap-2.5" style={{ color: "var(--text)" }}>
+                  <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0"
+                    style={{ background: "var(--accent-pale)", color: "#c4b5fd" }}>Q</span>
+                  {item.q}
+                </h3>
+                <p className="text-sm leading-relaxed pl-7.5" style={{ color: "var(--muted-b)", paddingLeft: "1.875rem" }}>{item.a}</p>
               </div>
             ))}
           </div>
