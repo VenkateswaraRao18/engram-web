@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import DemoAnimation from "./components/DemoAnimation";
+import SystemFlowAnimation from "./components/SystemFlowAnimation";
 
 function useReveal() {
   useEffect(() => {
@@ -216,6 +218,14 @@ function Cell({ val }: { val: boolean | string }) {
 export default function Home() {
   useReveal();
   const [annual, setAnnual] = useState(false);
+  const [ghStars, setGhStars] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch("https://api.github.com/repos/VenkateswaraRao18/Engram")
+      .then(r => r.json())
+      .then(d => setGhStars(d.stargazers_count ?? 0))
+      .catch(() => setGhStars(0));
+  }, []);
 
   return (
     <div style={{ background: "var(--bg)", color: "var(--text)" }}>
@@ -324,6 +334,12 @@ export default function Home() {
                 <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
               </svg>
               Star on GitHub
+              {ghStars !== null && (
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold"
+                  style={{ background: "rgba(255,255,255,.08)", color: "var(--muted-b)" }}>
+                  ★ {ghStars}
+                </span>
+              )}
             </a>
           </div>
 
@@ -406,6 +422,27 @@ export default function Home() {
                   style={{ color: "#6ee7b7", fontFamily: "var(--font-geist-mono)" }}>{SOLUTION_CODE}</pre>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ Demo Animation ══════════════════════════════════ */}
+      <section style={{ background: "var(--bg)", borderTop: "1px solid var(--border)" }}>
+        <div className="max-w-5xl mx-auto px-6 py-24">
+          <div className="text-center mb-14 reveal">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold mb-5"
+              style={{ background: "rgba(124,58,237,.14)", border: "1px solid rgba(124,58,237,.3)", color: "#c4b5fd" }}>
+              Live demo
+            </span>
+            <h2 className="text-3xl md:text-5xl font-bold mb-4" style={{ letterSpacing: "-0.03em" }}>
+              See supersession in action
+            </h2>
+            <p className="text-lg max-w-xl mx-auto" style={{ color: "var(--muted-b)" }}>
+              Watch how Engram automatically invalidates Tampa the moment Austin is added — no manual cleanup needed.
+            </p>
+          </div>
+          <div className="reveal">
+            <DemoAnimation />
           </div>
         </div>
       </section>
@@ -639,6 +676,11 @@ export default function Home() {
             <p className="text-lg" style={{ color: "var(--muted-b)" }}>
               No database to configure. No embedding model to host. Just call the API.
             </p>
+          </div>
+
+          {/* System flow animation */}
+          <div className="mb-20 reveal">
+            <SystemFlowAnimation />
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -930,10 +972,10 @@ export default function Home() {
             <Link href="/docs" className="text-sm transition-colors hover:text-white" style={{ color: "var(--muted-b)" }}>Docs</Link>
             <a href="https://github.com/VenkateswaraRao18/Engram" className="text-sm transition-colors hover:text-white" style={{ color: "var(--muted-b)" }}>GitHub</a>
             <a href="mailto:venkyjannegorla@gmail.com" className="text-sm transition-colors hover:text-white" style={{ color: "var(--muted-b)" }}>Contact</a>
-            <span className="flex items-center gap-1.5 text-sm" style={{ color: "#34d399" }}>
-              <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "#34d399", display: "inline-block" }} />
+            <Link href="/status" className="flex items-center gap-1.5 text-sm transition-colors hover:text-white" style={{ color: "#34d399" }}>
+              <span className="w-1.5 h-1.5 rounded-full shrink-0 anim-pulse-dot" style={{ background: "#34d399", display: "inline-block" }} />
               All systems operational
-            </span>
+            </Link>
           </div>
         </div>
       </footer>
